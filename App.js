@@ -8,6 +8,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as Location from 'expo-location';
+import { REACT_APP_API_KEY } from '@env';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function App() {
@@ -19,7 +22,17 @@ export default function App() {
   const [weather, setWeather] = useState('');
 
   const [days, setDays] = useState([]);
-  const API_KEY = process.env.REACT_APP_API_KEY;
+  const API_KEY = REACT_APP_API_KEY;
+
+  const icons = {
+    Clouds: 'weather-cloudy',
+    Clear: 'weather-sunny',
+    Rain: 'weather-pouring',
+    Atmosphere: 'weather-windy-variant',
+    Snow: 'weather-snowy',
+    Drizzle: 'weather-rain',
+    Thunderstorm: 'weather-lightning',
+  };
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -40,7 +53,6 @@ export default function App() {
       `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
     );
     const json = await response.json();
-    console.log(json);
     setTemp(json.main.temp);
     setMaxTemp(json.main.temp_max);
     setMinTemp(json.main.temp_min);
@@ -62,13 +74,14 @@ export default function App() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.weather}
       >
-        {/* <View style={styles.day}>
-          <Text style={styles.temp}>27</Text>
-          <Text style={styles.description}>Sunny</Text>
-        </View> */}
         {weather && temp && minTemp && maxTemp ? (
           <>
             <View style={styles.day}>
+              <MaterialCommunityIcons
+                name={icons[weather]}
+                size={60}
+                color='white'
+              />
               <Text style={styles.description}>weather</Text>
               <Text style={styles.temp}>{weather}</Text>
             </View>
@@ -113,6 +126,7 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: 68,
     fontWeight: '500',
+    color: 'white',
   },
   day: {
     width: SCREEN_WIDTH,
@@ -120,10 +134,12 @@ const styles = StyleSheet.create({
   },
   temp: {
     fontSize: 120,
-    marginTop: 50,
+    marginTop: 10,
+    color: 'white',
   },
   description: {
     fontSize: 60,
+    color: 'white',
     // marginTop: -30,
   },
 });
